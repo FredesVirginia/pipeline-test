@@ -1,0 +1,36 @@
+name: CI/CD React + Vercel
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout del código
+        uses: actions/checkout@v3
+
+      - name: 🧰 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: 📦 Instalar dependencias
+        run: npm install
+
+      - name: ⚒️ Build del proyecto
+        run: npm run build
+
+      - name: 🚀 Deploy a Vercel
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          npm install -g vercel
+          vercel --prod --confirm \
+            --token=$VERCEL_TOKEN \
+            --org=$VERCEL_ORG_ID \
+            --project=$VERCEL_PROJECT_ID
